@@ -44,21 +44,21 @@ const authModel = {
     });
   },
 
-  resetPassword: ({id, password}) => {
+  resetPassword: ({id_profile, password}) => {
     return new Promise((resolve, reject) => {
-        db.query(`select * from user where id=${id}`, (err, result) => {
+        db.query(`select * from profile where id_profile='${id_profile}'`, (err, result) => {
             if(err) {   
                 return reject(err.message)
             } else {
                 db.query(`UPDATE profile SET 
                   password='${password || result.rows[0].password}'
-                     WHERE id='${id}'`,
+                     WHERE id_profile='${id_profile}'`,
                      (err, result) => {
                         if(err) {
                             return reject(err.message)
                         } else{
                             return resolve({
-                                message: "password is updated"
+                                id_profile, password
                             })
                         }
                      })

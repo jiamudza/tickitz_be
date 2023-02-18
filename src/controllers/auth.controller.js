@@ -54,20 +54,25 @@ const authController = {
   },
 
   resetPassword: (req, res) => {
-    const request = {
-        ...req.body,
-        id: req.params.id
-    };
-
-    return authModel
-    .resetPassword(request)
-    .then(result => {
-        res.status(200).send({message:"data updated" , data : result})
-    }) 
-    .catch(err => {
-        console.log(err)
-        return res.status(500).send({message:"error on server side"})
-    })
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).send({ message: err.message });
+      } else {
+        const request = {
+          ...req.body,
+          password: hash,
+          id_profile: req.params.id_profile
+        };
+        return authModel
+          .resetPassword(request)
+          .then((result) => {
+            return res.status(201).send({ message: "succes", data: result });
+          })
+          .catch((error) => {
+            return res.status(500).send({ message: error });
+          });
+      }
+    });
     
 },
 
